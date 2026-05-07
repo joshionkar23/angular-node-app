@@ -1,0 +1,308 @@
+:host {
+  display: block;
+}
+
+/* ───────────── Layout shell ───────────── */
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* ───────────── Left panel ───────────── */
+.auth-left {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 48%;
+  min-height: 100vh;
+  padding: 2.5rem 3rem;
+  background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 55%, #0c4a6e 100%);
+  color: #e2e8f0;
+  position: relative;
+  overflow: hidden;
+
+  /* subtle radial glow */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(8,145,178,0.25) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (min-width: 900px) {
+    display: flex;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+  z-index: 1;
+
+  .brand-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #22d3ee;
+  }
+
+  strong {
+    color: #22d3ee;
+  }
+}
+
+.illustration {
+  z-index: 1;
+  margin: 1.5rem 0;
+
+  img {
+    width: 100%;
+    max-width: 360px;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 8px 32px rgba(8,145,178,0.3));
+  }
+}
+
+.tagline {
+  z-index: 1;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+    margin: 0 0 0.75rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  z-index: 1;
+  padding-bottom: 0.5rem;
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    backdrop-filter: blur(4px);
+
+    img {
+      width: 0.9rem;
+      height: 0.9rem;
+      object-fit: contain;
+    }
+  }
+}
+
+/* ───────────── Right panel ───────────── */
+.auth-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 4px 40px rgba(15,23,42,0.10);
+}
+
+/* ───────────── Mode tabs ───────────── */
+.mode-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  padding: 4px;
+  margin-bottom: 1.75rem;
+
+  button {
+    flex: 1;
+    padding: 0.45rem 0;
+    border: none;
+    background: transparent;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+
+    &.active {
+      background: #fff;
+      color: #0891b2;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+    }
+  }
+}
+
+/* ───────────── Form heading ───────────── */
+.form-heading {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0 0 0.3rem;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+}
+
+/* ───────────── Angular Material overrides ───────────── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-full {
+  width: 100%;
+}
+
+/* Keep Material label/input spacing consistent and prevent label overlap effects */
+:host ::ng-deep .auth-field {
+  margin-bottom: 0.35rem;
+
+  .mat-mdc-form-field-subscript-wrapper {
+    min-height: 1.25rem;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #cbd5e1 !important;
+  }
+
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing {
+    border-color: #0891b2 !important;
+    border-width: 2px !important;
+  }
+
+  .mat-mdc-form-field-icon-prefix {
+    color: #64748b;
+    padding-right: 0.45rem;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background: #fff;
+    border-radius: 0.85rem;
+  }
+
+  .mat-mdc-form-field-input-control.auth-input {
+    font-size: 0.95rem;
+    color: #0f172a;
+  }
+
+  .mat-mdc-floating-label {
+    color: #64748b !important;
+    font-weight: 500;
+  }
+}
+
+/* ───────────── Error banner ───────────── */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.85rem;
+
+  mat-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+/* ───────────── Submit button ───────────── */
+.submit-btn {
+  width: 100%;
+  padding: 0.7rem 0 !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(90deg, #0891b2, #0e7490) !important;
+  color: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(8,145,178,0.35) !important;
+  margin-top: 0.5rem;
+  transition: opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.55;
+    box-shadow: none !important;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ───────────── Toggle hint ───────────── */
+.toggle-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0.75rem 0 0;
+
+  .link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #0891b2;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 0.25rem;
+
+    &:hover { text-decoration: underline; }
+  }
+}

@@ -1,0 +1,118 @@
+<div class="auth-page">
+
+  <!-- ===== LEFT PANEL ===== -->
+  <aside class="auth-left">
+    <!-- Brand -->
+    <div class="brand">
+      <img class="brand-icon" src="/assets/auth/brand-bolt.svg" alt="ElectroCart logo" />
+      <span>Electro<strong>Cart</strong></span>
+    </div>
+
+    <!-- Hero illustration -->
+    <div class="illustration">
+      <img src="/assets/auth/hero-illustration.svg" alt="Shopping dashboard illustration" />
+    </div>
+
+    <!-- Tagline -->
+    <div class="tagline">
+      <h1>Shop smarter,<br/>checkout faster.</h1>
+      <p>Discover the best electronics with a seamless shopping experience.</p>
+    </div>
+
+    <!-- Feature pills -->
+    <div class="features">
+      <span class="pill">
+        <img src="/assets/auth/icon-curated.svg" alt="Curated products" />
+        Curated Products
+      </span>
+      <span class="pill">
+        <img src="/assets/auth/icon-secure.svg" alt="Secure payments" />
+        Secure Payments
+      </span>
+      <span class="pill">
+        <img src="/assets/auth/icon-fast.svg" alt="Fast checkout" />
+        Fast Checkout
+      </span>
+    </div>
+  </aside>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <main class="auth-right">
+    <div class="form-card">
+
+      <!-- Mode toggle tabs -->
+      <div class="mode-tabs">
+        <button type="button" [class.active]="!isSignup()" (click)="isSignup.set(false)">Sign In</button>
+        <button type="button" [class.active]="isSignup()" (click)="isSignup.set(true)">Sign Up</button>
+      </div>
+
+      <!-- Heading -->
+      <div class="form-heading">
+        <h2>{{ isSignup() ? 'Create your account' : 'Welcome back!' }}</h2>
+        <p>{{ isSignup() ? 'Join ElectroCart and start shopping' : 'Sign in to continue to ElectroCart' }}</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="activeForm()" (ngSubmit)="submit()" class="auth-form">
+
+        @if (isSignup()) {
+          <mat-form-field appearance="outline" class="field-full auth-field">
+            <mat-label>Full Name</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput class="auth-input" formControlName="name" autocomplete="name"/>
+            @if (signupForm.controls.name.invalid && signupTouched()) {
+              <mat-error>Name is required (min 2 characters)</mat-error>
+            }
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline" class="field-full auth-field">
+          <mat-label>Email address</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput class="auth-input" formControlName="email" type="email" autocomplete="email"/>
+          @if (activeForm().controls.email.invalid && formTouched()) {
+            <mat-error>Please enter a valid email</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-full auth-field">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput class="auth-input" formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="current-password"/>
+          <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword" [attr.aria-label]="'Toggle password visibility'">
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (activeForm().controls.password.invalid && formTouched()) {
+            <mat-error>Password must be at least 6 characters</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <button
+          mat-flat-button
+          class="submit-btn"
+          type="submit"
+          [disabled]="submitting() || activeForm().invalid">
+          @if (submitting()) {
+            <span class="spinner"></span>
+          }
+          {{ isSignup() ? 'Create Account' : 'Sign In' }}
+        </button>
+
+        <p class="toggle-hint">
+          {{ isSignup() ? 'Already have an account?' : "Don't have an account?" }}
+          <button type="button" class="link-btn" (click)="toggleMode()">
+            {{ isSignup() ? 'Sign in' : 'Sign up free' }}
+          </button>
+        </p>
+      </form>
+    </div>
+  </main>
+
+</div>

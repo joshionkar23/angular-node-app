@@ -1,0 +1,125 @@
+<div class="cart-page">
+
+  <!-- ===== PAGE HEADER ===== -->
+  <header class="cart-header">
+    <div class="cart-header__inner">
+      <div class="cart-header__left">
+        <a routerLink="/dashboard" class="back-link">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Continue Shopping
+        </a>
+        <h1 class="cart-title">
+          Shopping Cart
+          @if (cartStore.itemsCount() > 0) {
+            <span class="item-count">{{ cartStore.itemsCount() }} item{{ cartStore.itemsCount() === 1 ? '' : 's' }}</span>
+          }
+        </h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="cart-body">
+
+    <!-- ===== EMPTY STATE ===== -->
+    @if (!cartStore.cart() || cartStore.cart()!.items.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-10-4h4"/>
+          </svg>
+        </div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added any items yet.</p>
+        <a routerLink="/dashboard" class="browse-btn">Browse Products</a>
+      </div>
+
+    } @else {
+      <div class="cart-layout">
+
+        <!-- ===== ITEMS LIST ===== -->
+        <section class="items-section">
+          @for (item of cartStore.cart()!.items; track item.productId) {
+            <div class="cart-item">
+
+              <!-- Thumbnail -->
+              <div class="item-thumb">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+
+              <!-- Info -->
+              <div class="item-info">
+                <h3 class="item-name">{{ item.name }}</h3>
+                <p class="item-unit-price">&#8377;&nbsp;{{ item.unitPrice | number }} per unit</p>
+              </div>
+
+              <!-- Qty controls -->
+              <div class="item-qty">
+                <button
+                  class="qty-btn"
+                  (click)="changeQty(item.productId, item.quantity - 1)"
+                  [disabled]="item.quantity <= 1"
+                  aria-label="Decrease quantity">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+                </button>
+                <span class="qty-value">{{ item.quantity }}</span>
+                <button
+                  class="qty-btn"
+                  (click)="changeQty(item.productId, item.quantity + 1)"
+                  aria-label="Increase quantity">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+                </button>
+              </div>
+
+              <!-- Subtotal -->
+              <div class="item-subtotal">
+                <span class="subtotal-label">Subtotal</span>
+                <span class="subtotal-value">&#8377;&nbsp;{{ (item.unitPrice * item.quantity) | number }}</span>
+              </div>
+
+              <!-- Remove -->
+              <button class="remove-btn" (click)="remove(item.productId)" aria-label="Remove item">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zm-1 7a1 1 0 112 0v4a1 1 0 11-2 0V9zm4 0a1 1 0 112 0v4a1 1 0 11-2 0V9z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </section>
+
+        <!-- ===== ORDER SUMMARY ===== -->
+        <aside class="order-summary">
+          <h2 class="summary-title">Order Summary</h2>
+
+          <div class="summary-rows">
+            @for (item of cartStore.cart()!.items; track item.productId) {
+              <div class="summary-row">
+                <span class="summary-item-name">{{ item.name }} <span class="summary-qty">x{{ item.quantity }}</span></span>
+                <span>&#8377;&nbsp;{{ (item.unitPrice * item.quantity) | number }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="total-value">&#8377;&nbsp;{{ total() | number }}</span>
+          </div>
+
+          <a routerLink="/checkout" class="checkout-btn">Proceed to Checkout</a>
+
+          <p class="secure-note">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            Secure checkout
+          </p>
+        </aside>
+      </div>
+    }
+  </div>
+</div>

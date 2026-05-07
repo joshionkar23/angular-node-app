@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-slate-100">
+
+  <!-- ===== HEADER ===== -->
+  <header class="sticky top-0 z-50 bg-slate-900 shadow-lg">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-2">
+        <svg class="h-7 w-7 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <span class="text-xl font-bold tracking-tight text-white">Electro<span class="text-cyan-400">Cart</span></span>
+      </div>
+
+      <!-- Right side -->
+      <div class="flex items-center gap-3">
+
+        <!-- User chip -->
+        <div class="hidden items-center gap-1.5 rounded-full bg-slate-700 px-3 py-1 sm:flex">
+          <svg class="h-4 w-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zm-4 7a8 8 0 00-8 8h16a8 8 0 00-8-8z" />
+          </svg>
+          <span class="text-sm font-medium text-cyan-300">{{ authService.user()?.name }}</span>
+        </div>
+
+        <!-- Cart icon with badge -->
+        <button
+          [routerLink]="'/cart'"
+          class="relative rounded-full p-2 text-slate-300 transition hover:bg-slate-700 hover:text-white"
+          title="View cart">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-10-4h4" />
+          </svg>
+          @if (cartStore.itemsCount() > 0) {
+            <span class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+              {{ cartStore.itemsCount() }}
+            </span>
+          }
+        </button>
+
+        <!-- Logout -->
+        <button
+          (click)="logout()"
+          class="flex items-center gap-1.5 rounded-full border border-slate-600 px-3 py-1.5 text-sm text-slate-300 transition hover:border-slate-400 hover:text-white">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="mx-auto max-w-7xl px-4 py-8">
+    <h1 class="mb-6 text-2xl font-bold text-slate-800">All Products</h1>
+
+    @if (loading()) {
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (i of [1,2,3,4,5,6,7,8]; track i) {
+          <div class="h-72 animate-pulse rounded-2xl bg-slate-200"></div>
+        }
+      </div>
+    } @else if (products().length === 0) {
+      <p class="rounded-2xl bg-white p-6 text-center text-slate-500">No products found.</p>
+    } @else {
+      <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (product of products(); track product.id) {
+          <div class="product-card group flex flex-col rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-shadow hover:shadow-md">
+
+            <!-- Thumbnail placeholder -->
+            <div class="flex h-40 items-center justify-center rounded-t-2xl bg-gradient-to-br from-slate-100 to-cyan-50">
+              <svg class="h-16 w-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+
+            <!-- Card body -->
+            <div class="flex flex-1 flex-col p-4">
+              <h2 class="line-clamp-1 font-semibold text-slate-800">{{ product.name }}</h2>
+              <p class="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-500">{{ product.description || 'No description available' }}</p>
+
+              <div class="mt-auto pt-4">
+                <p class="text-xl font-bold text-slate-900">&#8377;&nbsp;{{ product.price | number }}</p>
+
+                <div class="mt-3 flex items-center justify-between">
+                  <span [class]="product.stock > 0 ? 'stock-badge in-stock' : 'stock-badge out-stock'">
+                    {{ product.stock > 0 ? 'In Stock (' + product.stock + ')' : 'Out of Stock' }}
+                  </span>
+
+                  <button
+                    (click)="addToCart(product)"
+                    [disabled]="product.stock === 0"
+                    class="add-to-cart-btn">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-10-4h4" />
+                    </svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+    }
+  </main>
+</div>
