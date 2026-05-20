@@ -19,7 +19,7 @@ export class AdminCategoryFormPage {
 
   readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly svc = new CategoryService();
+  private readonly svc = inject(CategoryService);
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
