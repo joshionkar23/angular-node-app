@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,9 +17,11 @@ export class AdminCategoryFormPage {
   description = '';
   imageUrl = '';
 
+  readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly svc = new CategoryService();
 
-  constructor(public route: ActivatedRoute, private router: Router) {
+  constructor() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.svc.get(id).subscribe({ next: (r) => {
