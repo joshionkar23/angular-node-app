@@ -5,6 +5,7 @@ import { logger } from "../config/logger.js";
 import { CartModel } from "../schemas/cart.schema.js";
 import { OrderModel } from "../schemas/order.schema.js";
 import { ProductModel } from "../schemas/product.schema.js";
+import { CategoryModel } from "../schemas/category.schema.js";
 import { UserModel } from "../schemas/user.schema.js";
 
 const seed = async (): Promise<void> => {
@@ -13,6 +14,7 @@ const seed = async (): Promise<void> => {
   await Promise.all([
     UserModel.deleteMany({}),
     ProductModel.deleteMany({}),
+    CategoryModel.deleteMany({}),
     CartModel.deleteMany({}),
     OrderModel.deleteMany({})
   ]);
@@ -30,7 +32,8 @@ const seed = async (): Promise<void> => {
       name: "Admin User",
       email: "admin@example.com",
       passwordHash,
-      tokenVersion: 0
+      tokenVersion: 0,
+      role: "admin"
     }
   ]);
 
@@ -156,6 +159,24 @@ const seed = async (): Promise<void> => {
       stock: 27
     }
   ]);
+
+  // Seed categories and assign to products
+  const categoriesToInsert = [
+    { name: "Electronics", slug: "electronics", description: "Gadgets and devices" },
+    { name: "Computers", slug: "computers", description: "Laptops, monitors and accessories" },
+    { name: "Audio", slug: "audio", description: "Headphones, speakers" },
+    { name: "Office", slug: "office", description: "Office supplies and furniture" },
+    { name: "Mobile", slug: "mobile", description: "Phones and accessories" }
+  ];
+
+  const categories = await CategoryModel.insertMany(categoriesToInsert);
+
+  await Promise.all(
+    products.map((p: any, i: number) => {
+      const cat = categories[i % categories.length];
+      return ProductModel.findByIdAndUpdate(p._id, { category: cat.slug }).lean();
+    })
+  );
 
   logger.info("Seed completed", {
     users: users.length,

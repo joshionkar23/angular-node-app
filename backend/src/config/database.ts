@@ -4,7 +4,8 @@ import { logger } from "./logger.js";
 
 export const connectDatabase = async (): Promise<void> => {
   await mongoose.connect(env.MONGODB_URI, {
-    dbName: "backend_db"
+    // dbName: "backend_db"
+    dbName: "e-comm-app"
   });
 
   logger.info("MongoDB connection established");

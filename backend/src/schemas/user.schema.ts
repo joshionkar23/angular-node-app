@@ -7,6 +7,10 @@ interface UserDocument {
   tokenVersion: number;
   createdAt: Date;
   updatedAt: Date;
+  role: "user" | "admin";
+  phone?: string | null;
+  address?: string | null;
+  profileImageUrl?: string | null;
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -34,6 +38,29 @@ const userSchema = new Schema<UserDocument>(
       type: Number,
       required: true,
       default: 0
+    }
+    ,
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      required: true,
+      default: "user",
+      index: true
+    },
+    phone: {
+      type: String,
+      required: false,
+      trim: true
+    },
+    address: {
+      type: String,
+      required: false,
+      trim: true
+    },
+    profileImageUrl: {
+      type: String,
+      required: false,
+      trim: true
     }
   },
   {

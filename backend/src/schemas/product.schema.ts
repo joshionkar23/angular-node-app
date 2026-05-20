@@ -5,6 +5,10 @@ interface ProductDocument {
   description?: string;
   price: number;
   stock: number;
+  category?: string;
+  images?: string[];
+  rating?: number;
+  reviewCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +36,30 @@ const productSchema = new Schema<ProductDocument>(
       type: Number,
       required: true,
       min: 0,
+      default: 0
+    }
+    ,
+    category: {
+      type: String,
+      required: false,
+      trim: true,
+      index: true
+    },
+    images: {
+      type: [String],
+      required: false,
+      default: []
+    },
+    rating: {
+      type: Number,
+      required: false,
+      min: 0,
+      max: 5,
+      default: 0
+    },
+    reviewCount: {
+      type: Number,
+      required: false,
       default: 0
     }
   },
