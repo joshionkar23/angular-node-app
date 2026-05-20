@@ -13,6 +13,10 @@ const mapToEntity = (doc: {
   id: doc._id.toString(),
   name: doc.name,
   email: doc.email,
+  role: (doc as any).role,
+  phone: (doc as any).phone ?? null,
+  address: (doc as any).address ?? null,
+  profileImageUrl: (doc as any).profileImageUrl ?? null,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt
 });
@@ -29,6 +33,10 @@ const mapToUserWithPassword = (doc: {
   id: doc._id.toString(),
   name: doc.name,
   email: doc.email,
+  role: (doc as any).role,
+  phone: (doc as any).phone ?? null,
+  address: (doc as any).address ?? null,
+  profileImageUrl: (doc as any).profileImageUrl ?? null,
   passwordHash: doc.passwordHash,
   tokenVersion: doc.tokenVersion,
   createdAt: doc.createdAt,
@@ -40,9 +48,14 @@ export class UserRepository {
     const userDoc = await UserModel.create({
       name: input.name,
       email: input.email,
-      passwordHash: input.passwordHash
+      passwordHash: input.passwordHash,
+      role: (input as any).role ?? "user",
+      phone: (input as any).phone,
+      address: (input as any).address,
+      profileImageUrl: (input as any).profileImageUrl
     });
-    return mapToEntity(userDoc.toObject());
+    const raw = (userDoc as any).toObject ? (userDoc as any).toObject() : (userDoc as any);
+    return mapToEntity(raw);
   }
 
   public async findByEmail(email: string): Promise<User | null> {

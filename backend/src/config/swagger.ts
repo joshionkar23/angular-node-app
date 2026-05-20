@@ -145,6 +145,91 @@ export const swaggerDocument = {
         }
       }
     },
+    "/categories": {
+      get: {
+        tags: ["Products"],
+        summary: "List categories",
+        responses: {
+          "200": { description: "List of categories" }
+        }
+      },
+      post: {
+        tags: ["Products"],
+        summary: "Create category",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "slug"],
+                properties: {
+                  name: { type: "string", example: "Electronics" },
+                  slug: { type: "string", example: "electronics" },
+                  description: { type: "string", example: "Gadgets and devices" },
+                  imageUrl: { type: "string", format: "uri" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "201": { description: "Category created" },
+          "401": { description: "Unauthorized" },
+          "403": { description: "Forbidden - admin only" }
+        }
+      }
+    },
+    "/categories/{id}": {
+      get: {
+        tags: ["Products"],
+        summary: "Get category by id",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "200": { description: "Category details" },
+          "404": { description: "Not found" }
+        }
+      },
+      put: {
+        tags: ["Products"],
+        summary: "Update category",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  slug: { type: "string" },
+                  description: { type: "string" },
+                  imageUrl: { type: "string", format: "uri" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Category updated" },
+          "401": { description: "Unauthorized" },
+          "403": { description: "Forbidden - admin only" }
+        }
+      },
+      delete: {
+        tags: ["Products"],
+        summary: "Delete category",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "204": { description: "Category deleted" },
+          "401": { description: "Unauthorized" },
+          "403": { description: "Forbidden - admin only" }
+        }
+      }
+    },
     "/products/{id}": {
       get: {
         tags: ["Products"],

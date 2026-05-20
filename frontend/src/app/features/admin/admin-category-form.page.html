@@ -1,0 +1,13 @@
+<div class="category-form">
+  <h2>{{ route.snapshot.paramMap.get('id') ? 'Edit' : 'New' }} Category</h2>
+  <form (ngSubmit)="save()">
+    <label>Name<br /><input [(ngModel)]="name" name="name" required /></label>
+    <label>Slug<br /><input [(ngModel)]="slug" name="slug" required /></label>
+    <label>Description<br /><textarea [(ngModel)]="description" name="description"></textarea></label>
+    <label>Image URL<br /><input [(ngModel)]="imageUrl" name="imageUrl" /></label>
+    <div style="margin-top:8px">
+      <button type="submit">Save</button>
+      <a routerLink="/admin/categories">Cancel</a>
+    </div>
+  </form>
+</div>
