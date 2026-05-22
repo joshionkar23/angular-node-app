@@ -1,33 +1,28 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { FormField, form, required } from '@angular/forms/signals';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { CategoryService, CategoryDto } from '../../core/services/category.service';
-
-interface CategoryFormValue {
-  name: string;
-  slug: string;
-  description: string;
-  imageUrl: string;
-}
-
-const emptyForm = (): CategoryFormValue => ({
-  name: '',
-  slug: '',
-  description: '',
-  imageUrl: ''
-});
+import {
+  CategoryFormDialog,
+  CategoryFormDialogData,
+  CategoryFormResult
+} from './category-form.dialog';
+import { ConfirmDeleteDialog } from './confirm-delete.dialog';
 
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormField],
+  imports: [CommonModule, RouterLink, MatButtonModule],
   templateUrl: './admin-categories.page.html',
   styleUrls: ['./admin-categories.page.scss']
 })
 export class AdminCategoriesPage {
   private readonly svc = inject(CategoryService);
+  private readonly dialog = inject(MatDialog);
 
   private readonly categoriesResource = rxResource({
     stream: () => this.svc.list()
@@ -40,77 +35,40 @@ export class AdminCategoriesPage {
     return this.categoriesResource.error() ? [] : null;
   });
 
-  private readonly model = signal<CategoryFormValue>(emptyForm());
-  readonly categoryForm = form(this.model, (path) => {
-    required(path.name);
-    required(path.slug);
-  });
-
-  readonly modalVisible = signal(false);
-  readonly editingId = signal<string | null>(null);
-  readonly deleteModalVisible = signal(false);
-  private deleteCandidateId: string | null = null;
-
-  openModal() {
-    this.model.set(emptyForm());
-    this.editingId.set(null);
-    this.modalVisible.set(true);
-  }
-
-  closeModal() {
-    this.modalVisible.set(false);
-  }
-
-  saveCategory() {
-    if (!this.categoryForm().valid()) return;
-
-    const payload = this.model();
-    const id = this.editingId();
-    const request$ = id ? this.svc.update(id, payload) : this.svc.create(payload);
-
-    request$.subscribe({
-      next: () => {
-        this.closeModal();
-        this.editingId.set(null);
-        this.categoriesResource.reload();
-      }
+  openAddDialog() {
+    const ref = this.dialog.open<CategoryFormDialog, CategoryFormDialogData, CategoryFormResult>(
+      CategoryFormDialog,
+      { data: {} }
+    );
+    ref.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.svc.create(result).subscribe({
+        next: () => this.categoriesResource.reload()
+      });
     });
   }
 
-  openEditModal(id: string) {
+  openEditDialog(id: string) {
     this.svc.get(id).subscribe({
       next: (r) => {
-        const c = r.data;
-        this.model.set({
-          name: c.name,
-          slug: c.slug,
-          description: c.description ?? '',
-          imageUrl: c.imageUrl ?? ''
+        const ref = this.dialog.open<CategoryFormDialog, CategoryFormDialogData, CategoryFormResult>(
+          CategoryFormDialog,
+          { data: { category: r.data } }
+        );
+        ref.afterClosed().subscribe((result) => {
+          if (!result) return;
+          this.svc.update(id, result).subscribe({
+            next: () => this.categoriesResource.reload()
+          });
         });
-        this.editingId.set(id);
-        this.modalVisible.set(true);
       }
     });
   }
 
-  openDeleteModal(id: string) {
-    this.deleteCandidateId = id;
-    this.deleteModalVisible.set(true);
-  }
-
-  closeDeleteModal() {
-    this.deleteCandidateId = null;
-    this.deleteModalVisible.set(false);
-  }
-
-  confirmDelete() {
-    const id = this.deleteCandidateId;
-    if (!id) return;
-    this.svc.delete(id).subscribe({
-      next: () => {
-        this.closeDeleteModal();
-        this.categoriesResource.reload();
-      }
-    });
+  openDeleteDialog(id: string) {
+    const ref = this.dialog.open<ConfirmDeleteDialog, void, boolean>(ConfirmDeleteDialog);
+    ref.afterClosed()
+      .pipe(switchMap((confirmed) => (confirmed ? this.svc.delete(id) : [])))
+      .subscribe(() => this.categoriesResource.reload());
   }
 }
