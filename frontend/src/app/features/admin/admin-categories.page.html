@@ -1,7 +1,7 @@
 <div class="admin-categories">
   <div class="toolbar">
     <h2>Categories</h2>
-    <button class="btn" (click)="openModal()">Add Category</button>
+    <button mat-flat-button color="primary" (click)="openAddDialog()">Add Category</button>
   </div>
 
   @if (loading()) {
@@ -25,9 +25,9 @@
             <td>{{ c.slug }}</td>
             <td>{{ c.description }}</td>
             <td>
-              <button class="link-btn" (click)="openEditModal(c.id)">Edit</button>
+              <button class="link-btn" (click)="openEditDialog(c.id)">Edit</button>
               &nbsp;|&nbsp;
-              <button class="link-btn" (click)="openDeleteModal(c.id)">Delete</button>
+              <button class="link-btn" (click)="openDeleteDialog(c.id)">Delete</button>
             </td>
           </tr>
         }
@@ -37,62 +37,5 @@
 
   @if (categories()?.length === 0) {
     <div>No categories found</div>
-  }
-
-  @if (modalVisible()) {
-    <div class="modal-backdrop">
-      <div class="modal">
-        @if (!editingId()) {
-          <h3>Add Category</h3>
-        }
-        @if (editingId()) {
-          <h3>Edit Category</h3>
-        }
-        <form (submit)="$event.preventDefault(); saveCategory()">
-          <div class="form-row">
-            <label for="category-name">Name</label>
-            <input id="category-name" [formField]="categoryForm.name" placeholder="Category name" />
-            @if (categoryForm.name().touched() && categoryForm.name().errors().length) {
-              <small class="error">Name is required</small>
-            }
-          </div>
-          <div class="form-row">
-            <label for="category-slug">Slug</label>
-            <input id="category-slug" [formField]="categoryForm.slug" placeholder="category-slug" />
-            @if (categoryForm.slug().touched() && categoryForm.slug().errors().length) {
-              <small class="error">Slug is required</small>
-            }
-          </div>
-          <div class="form-row">
-            <label for="category-description">Description</label>
-            <textarea id="category-description" [formField]="categoryForm.description" rows="3" placeholder="Description"></textarea>
-          </div>
-          <div class="form-row">
-            <label for="category-image-url">Image URL</label>
-            <input id="category-image-url" [formField]="categoryForm.imageUrl" placeholder="https://..." />
-          </div>
-          <div class="modal-actions">
-            <button class="btn" type="submit" [disabled]="!categoryForm().valid()">Save</button>
-            <button class="btn btn-secondary" type="button" (click)="closeModal()">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  }
-
-  @if (deleteModalVisible()) {
-    <div class="modal-backdrop">
-      <div class="modal small">
-        <div class="modal-header">
-          <h3>Delete Category</h3>
-          <button class="close-icon" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()" type="button">✕</button>
-        </div>
-        <p>Are you sure you want to delete this category? This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button class="btn btn-danger" (click)="confirmDelete()">Delete</button>
-          <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
-        </div>
-      </div>
-    </div>
   }
 </div>
