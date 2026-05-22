@@ -48,26 +48,34 @@
         @if (editingId()) {
           <h3>Edit Category</h3>
         }
-        <div class="form-row">
-          <label for="category-name">Name</label>
-          <input id="category-name" [(ngModel)]="name" placeholder="Category name" />
-        </div>
-        <div class="form-row">
-          <label for="category-slug">Slug</label>
-          <input id="category-slug" [(ngModel)]="slug" placeholder="category-slug" />
-        </div>
-        <div class="form-row">
-          <label for="category-description">Description</label>
-          <textarea id="category-description" [(ngModel)]="description" rows="3" placeholder="Description"></textarea>
-        </div>
-        <div class="form-row">
-          <label for="category-image-url">Image URL</label>
-          <input id="category-image-url" [(ngModel)]="imageUrl" placeholder="https://..." />
-        </div>
-        <div class="modal-actions">
-          <button class="btn" (click)="createCategory()">Save</button>
-          <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-        </div>
+        <form (submit)="$event.preventDefault(); saveCategory()">
+          <div class="form-row">
+            <label for="category-name">Name</label>
+            <input id="category-name" [formField]="categoryForm.name" placeholder="Category name" />
+            @if (categoryForm.name().touched() && categoryForm.name().errors().length) {
+              <small class="error">Name is required</small>
+            }
+          </div>
+          <div class="form-row">
+            <label for="category-slug">Slug</label>
+            <input id="category-slug" [formField]="categoryForm.slug" placeholder="category-slug" />
+            @if (categoryForm.slug().touched() && categoryForm.slug().errors().length) {
+              <small class="error">Slug is required</small>
+            }
+          </div>
+          <div class="form-row">
+            <label for="category-description">Description</label>
+            <textarea id="category-description" [formField]="categoryForm.description" rows="3" placeholder="Description"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="category-image-url">Image URL</label>
+            <input id="category-image-url" [formField]="categoryForm.imageUrl" placeholder="https://..." />
+          </div>
+          <div class="modal-actions">
+            <button class="btn" type="submit" [disabled]="!categoryForm().valid()">Save</button>
+            <button class="btn btn-secondary" type="button" (click)="closeModal()">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   }
