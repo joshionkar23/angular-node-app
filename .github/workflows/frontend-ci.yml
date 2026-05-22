@@ -18,15 +18,14 @@ concurrency:
   group: frontend-deploy
   cancel-in-progress: false
 
-defaults:
-  run:
-    working-directory: frontend
-
 jobs:
   build:
     name: Lint, Test, Build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v5
 
